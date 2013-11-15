@@ -7,6 +7,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -27,21 +28,27 @@ public class miniGameScreen implements Screen, InputProcessor {
 	private SpriteBatch batch;
 
 	private boolean started = false;
+	private Sprite track;
+	private Sprite minitruck;
 
+	// 500 pixel/s
+	private int speed = 500;
+	
 	public miniGameScreen(miniGame game) {
 		this.game = game;
+
 		stage = new Stage();
 		skin = new Skin();
-		skin.add("start", new Texture("data/start.png"));
-		skin.add("stop", new Texture("data/stop.png"));
+		skin.add("start", new Texture("data/minigame/start.png"));
+		skin.add("stop", new Texture("data/minigame/stop.png"));
+		skin.add("back", new Texture("data/minigame/back.png"));
+
 		gameButton = new Image(skin, "start");
-		// gameButton.setSize(800, 500);
 		gameButton.setOrigin(gameButton.getWidth() / 2,
 				gameButton.getHeight() / 2);
-		// gameButton.setRotation(90);
 		gameButton.setPosition(
 				Gdx.graphics.getWidth() / 2 - gameButton.getWidth() / 2,
-				Gdx.graphics.getHeight() - gameButton.getHeight()-20);
+				Gdx.graphics.getHeight() - gameButton.getHeight() - 20);
 		gameButton.addListener(new ClickListener() {
 
 			@Override
@@ -191,6 +198,26 @@ public class miniGameScreen implements Screen, InputProcessor {
 
 		});
 
+		track = new Sprite(new Texture(
+				Gdx.files.internal("data/minigame/track.jpg")));
+		track.setSize(
+				Gdx.graphics.getWidth(),
+				1.0f * track.getHeight() / track.getWidth()
+						* Gdx.graphics.getWidth());
+		track.setPosition(0, Gdx.graphics.getHeight() - gameButton.getHeight()
+				- 40 - 1.0f * track.getHeight() / track.getWidth()
+				* Gdx.graphics.getWidth());
+
+		minitruck = new Sprite(new Texture(
+				Gdx.files.internal("data/minigame/minitruck.png")));
+		minitruck.setSize(track.getHeight() / 3f * minitruck.getWidth()
+				/ minitruck.getHeight(), track.getHeight() / 3f);
+		minitruck.setPosition(
+				10,
+				Gdx.graphics.getHeight() - gameButton.getHeight() - 40 - 0.6f
+						* track.getHeight() / track.getWidth()
+						* Gdx.graphics.getWidth());
+
 		stage.addActor(gameButton);
 		batch = new SpriteBatch();
 		cam = new OrthographicCamera();
@@ -207,10 +234,11 @@ public class miniGameScreen implements Screen, InputProcessor {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		batch.begin();
-
+		stage.act(delta);
 		stage.draw();
-
+		batch.begin();
+		track.draw(batch);
+		minitruck.draw(batch);
 		batch.end();
 	}
 
