@@ -6,7 +6,6 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -28,32 +27,51 @@ public class miniGameScreen implements Screen, InputProcessor {
 
 	private OrthographicCamera cam;
 	private SpriteBatch batch;
+	private TextureAtlas atlas;
 
-	private boolean started = false;
 	private Sprite track;
 	private Sprite minitruck;
 
 	// 500 pixel/s
 	private int speed = 2500;
-	private boolean running = false;
-	
+
+	private static enum State {
+		WAITING, SET, GO, STOP
+	};
+
+	State state;
+
 	public miniGameScreen(miniGame game) {
 		this.game = game;
-
-		TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("data/minigame/minigame.pack"),Gdx.files.internal("data/minigame"));
 		
+		state = State.WAITING;
+		
+		setUI();
+		batch = new SpriteBatch();
+		cam = new OrthographicCamera();
+
+		InputMultiplexer plex = new InputMultiplexer();
+		plex.addProcessor(stage);
+		plex.addProcessor(this);
+		Gdx.input.setInputProcessor(plex);
+	}
+
+	public void setUI() {
+		atlas = new TextureAtlas(
+				Gdx.files.internal("data/minigame/minigame.pack"),
+				Gdx.files.internal("data/minigame"));
+
 		stage = new Stage();
 		skin = new Skin();
 		skin.addRegions(atlas);
 
-		
 		startBtn = new Image(skin, "startup");
 		stopBtn = new Image(skin, "stopup");
-		
+
 		startBtn.setPosition(0, 10);
-		stopBtn.setPosition(Gdx.graphics.getWidth()-stopBtn.getWidth(), 0);
-		
-		startBtn.addListener(new InputListener(){
+		stopBtn.setPosition(Gdx.graphics.getWidth() - stopBtn.getWidth(), 0);
+
+		startBtn.addListener(new InputListener() {
 
 			@Override
 			public boolean handle(Event e) {
@@ -65,12 +83,14 @@ public class miniGameScreen implements Screen, InputProcessor {
 			public boolean touchDown(InputEvent event, float x, float y,
 					int pointer, int button) {
 				startBtn.setDrawable(skin, "startdn");
+				state = State.SET;
 				return true;
 			}
 
 			@Override
 			public void touchUp(InputEvent event, float x, float y,
 					int pointer, int button) {
+				state = State.GO;
 				startBtn.setDrawable(skin, "startup");
 			}
 
@@ -125,15 +145,97 @@ public class miniGameScreen implements Screen, InputProcessor {
 				// TODO Auto-generated method stub
 				return super.keyTyped(event, character);
 			}
-			
+
 		});
-		
-		
-		
-		
-		
-		
-		
+		stopBtn.addListener(new InputListener() {
+
+			@Override
+			public boolean handle(Event e) {
+				// TODO Auto-generated method stub
+				return super.handle(e);
+			}
+
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y,
+					int pointer, int button) {
+				
+				
+				switch (state) {
+				
+				// Dear Robin, here I got a error to access this type varible
+				case miniGameScreen.State.GO:
+					
+					break;
+
+				default:
+					break;
+				}
+				
+				stopBtn.setDrawable(skin, "stopdn");
+				return true;
+			}
+
+			@Override
+			public void touchUp(InputEvent event, float x, float y,
+					int pointer, int button) {
+				stopBtn.setDrawable(skin, "stopup");
+				super.touchUp(event, x, y, pointer, button);
+			}
+
+			@Override
+			public void touchDragged(InputEvent event, float x, float y,
+					int pointer) {
+				// TODO Auto-generated method stub
+				super.touchDragged(event, x, y, pointer);
+			}
+
+			@Override
+			public boolean mouseMoved(InputEvent event, float x, float y) {
+				// TODO Auto-generated method stub
+				return super.mouseMoved(event, x, y);
+			}
+
+			@Override
+			public void enter(InputEvent event, float x, float y, int pointer,
+					Actor fromActor) {
+				// TODO Auto-generated method stub
+				super.enter(event, x, y, pointer, fromActor);
+			}
+
+			@Override
+			public void exit(InputEvent event, float x, float y, int pointer,
+					Actor toActor) {
+				// TODO Auto-generated method stub
+				super.exit(event, x, y, pointer, toActor);
+			}
+
+			@Override
+			public boolean scrolled(InputEvent event, float x, float y,
+					int amount) {
+				// TODO Auto-generated method stub
+				return super.scrolled(event, x, y, amount);
+			}
+
+			@Override
+			public boolean keyDown(InputEvent event, int keycode) {
+				// TODO Auto-generated method stub
+				return super.keyDown(event, keycode);
+			}
+
+			@Override
+			public boolean keyUp(InputEvent event, int keycode) {
+				// TODO Auto-generated method stub
+				return super.keyUp(event, keycode);
+			}
+
+			@Override
+			public boolean keyTyped(InputEvent event, char character) {
+				// TODO Auto-generated method stub
+				return super.keyTyped(event, character);
+			}
+
+		});
+
 		track = new Sprite(atlas.findRegion("track"));
 		track.setSize(
 				Gdx.graphics.getWidth(),
@@ -144,19 +246,11 @@ public class miniGameScreen implements Screen, InputProcessor {
 		minitruck = new Sprite(atlas.findRegion("minitruck"));
 		minitruck.setSize(track.getHeight() / 3f * minitruck.getWidth()
 				/ minitruck.getHeight(), track.getHeight() / 3f);
-		minitruck.setPosition(
-				10,
-				Gdx.graphics.getHeight() - 0.6f*track.getHeight());
+		minitruck.setPosition(10,
+				Gdx.graphics.getHeight() - 0.6f * track.getHeight());
 
 		stage.addActor(startBtn);
 		stage.addActor(stopBtn);
-		batch = new SpriteBatch();
-		cam = new OrthographicCamera();
-
-		InputMultiplexer plex = new InputMultiplexer();
-		plex.addProcessor(stage);
-		plex.addProcessor(this);
-		Gdx.input.setInputProcessor(plex);
 	}
 
 	@Override
