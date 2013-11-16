@@ -22,7 +22,7 @@ public class miniGameScreen implements Screen, InputProcessor {
 	private miniGame game;
 	private Skin skin;
 	private Stage stage;
-	private Image gameButton;
+	private Image startBtn, stopBtn, backBtn;
 
 	private OrthographicCamera cam;
 	private SpriteBatch batch;
@@ -42,171 +42,21 @@ public class miniGameScreen implements Screen, InputProcessor {
 		skin.add("start", new Texture("data/minigame/start.png"));
 		skin.add("stop", new Texture("data/minigame/stop.png"));
 		skin.add("back", new Texture("data/minigame/back.png"));
-
-		gameButton = new Image(skin, "start");
-		gameButton.setOrigin(gameButton.getWidth() / 2,
-				gameButton.getHeight() / 2);
-		gameButton.setPosition(
-				Gdx.graphics.getWidth() / 2 - gameButton.getWidth() / 2,
-				Gdx.graphics.getHeight() - gameButton.getHeight() - 20);
-		gameButton.addListener(new ClickListener() {
-
-			@Override
-			public boolean touchDown(InputEvent event, float x, float y,
-					int pointer, int button) {
-
-				if (!started) {
-					gameButton.setDrawable(skin, "stop");
-					started = !started;
-				} else {
-					gameButton.setDrawable(skin, "start");
-					started = !started;
-				}
-
-				return false;
-			}
-
-			@Override
-			public void touchDragged(InputEvent event, float x, float y,
-					int pointer) {
-				// TODO Auto-generated method stub
-				super.touchDragged(event, x, y, pointer);
-			}
-
-			@Override
-			public void touchUp(InputEvent event, float x, float y,
-					int pointer, int button) {
-				// TODO Auto-generated method stub
-				super.touchUp(event, x, y, pointer, button);
-			}
-
-			@Override
-			public void enter(InputEvent event, float x, float y, int pointer,
-					Actor fromActor) {
-				// TODO Auto-generated method stub
-				super.enter(event, x, y, pointer, fromActor);
-			}
-
-			@Override
-			public void exit(InputEvent event, float x, float y, int pointer,
-					Actor toActor) {
-				// TODO Auto-generated method stub
-				super.exit(event, x, y, pointer, toActor);
-			}
-
-			@Override
-			public void cancel() {
-				// TODO Auto-generated method stub
-				super.cancel();
-			}
-
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				// TODO Auto-generated method stub
-				super.clicked(event, x, y);
-			}
-
-			@Override
-			public boolean isOver(Actor actor, float x, float y) {
-				// TODO Auto-generated method stub
-				return super.isOver(actor, x, y);
-			}
-
-			@Override
-			public boolean inTapSquare(float x, float y) {
-				// TODO Auto-generated method stub
-				return super.inTapSquare(x, y);
-			}
-
-			@Override
-			public void invalidateTapSquare() {
-				// TODO Auto-generated method stub
-				super.invalidateTapSquare();
-			}
-
-			@Override
-			public boolean isPressed() {
-				// TODO Auto-generated method stub
-				return super.isPressed();
-			}
-
-			@Override
-			public boolean isOver() {
-				// TODO Auto-generated method stub
-				return super.isOver();
-			}
-
-			@Override
-			public void setTapSquareSize(float halfTapSquareSize) {
-				// TODO Auto-generated method stub
-				super.setTapSquareSize(halfTapSquareSize);
-			}
-
-			@Override
-			public float getTapSquareSize() {
-				// TODO Auto-generated method stub
-				return super.getTapSquareSize();
-			}
-
-			@Override
-			public void setTapCountInterval(float tapCountInterval) {
-				// TODO Auto-generated method stub
-				super.setTapCountInterval(tapCountInterval);
-			}
-
-			@Override
-			public int getTapCount() {
-				// TODO Auto-generated method stub
-				return super.getTapCount();
-			}
-
-			@Override
-			public float getTouchDownX() {
-				// TODO Auto-generated method stub
-				return super.getTouchDownX();
-			}
-
-			@Override
-			public float getTouchDownY() {
-				// TODO Auto-generated method stub
-				return super.getTouchDownY();
-			}
-
-			@Override
-			public int getPressedButton() {
-				// TODO Auto-generated method stub
-				return super.getPressedButton();
-			}
-
-			@Override
-			public int getPressedPointer() {
-				// TODO Auto-generated method stub
-				return super.getPressedPointer();
-			}
-
-			@Override
-			public int getButton() {
-				// TODO Auto-generated method stub
-				return super.getButton();
-			}
-
-			@Override
-			public void setButton(int button) {
-				// TODO Auto-generated method stub
-				super.setButton(button);
-			}
-
-		});
-
+		
+		startBtn = new Image(skin, "start");
+		stopBtn = new Image(skin, "stop");
+		
+		startBtn.setPosition(0, 10);
+		stopBtn.setPosition(Gdx.graphics.getWidth()-stopBtn.getWidth(), 0);
+		
+		
 		track = new Sprite(new Texture(
 				Gdx.files.internal("data/minigame/track.jpg")));
 		track.setSize(
 				Gdx.graphics.getWidth(),
 				1.0f * track.getHeight() / track.getWidth()
 						* Gdx.graphics.getWidth());
-		track.setPosition(0, Gdx.graphics.getHeight() - gameButton.getHeight()
-				- 40 - 1.0f * track.getHeight() / track.getWidth()
-				* Gdx.graphics.getWidth());
+		track.setPosition(0, Gdx.graphics.getHeight() - track.getHeight());
 
 		minitruck = new Sprite(new Texture(
 				Gdx.files.internal("data/minigame/minitruck.png")));
@@ -214,11 +64,10 @@ public class miniGameScreen implements Screen, InputProcessor {
 				/ minitruck.getHeight(), track.getHeight() / 3f);
 		minitruck.setPosition(
 				10,
-				Gdx.graphics.getHeight() - gameButton.getHeight() - 40 - 0.6f
-						* track.getHeight() / track.getWidth()
-						* Gdx.graphics.getWidth());
+				Gdx.graphics.getHeight() - 0.6f*track.getHeight());
 
-		stage.addActor(gameButton);
+		stage.addActor(startBtn);
+		stage.addActor(stopBtn);
 		batch = new SpriteBatch();
 		cam = new OrthographicCamera();
 
