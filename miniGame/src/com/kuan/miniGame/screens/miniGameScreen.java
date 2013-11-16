@@ -9,12 +9,14 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.kuan.miniGame.miniGame;
 
 public class miniGameScreen implements Screen, InputProcessor {
@@ -32,34 +34,114 @@ public class miniGameScreen implements Screen, InputProcessor {
 	private Sprite minitruck;
 
 	// 500 pixel/s
-	private int speed = 500;
+	private int speed = 2500;
+	private boolean running = false;
 	
 	public miniGameScreen(miniGame game) {
 		this.game = game;
 
+		TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("data/minigame/minigame.pack"),Gdx.files.internal("data/minigame"));
+		
 		stage = new Stage();
 		skin = new Skin();
-		skin.add("start", new Texture("data/minigame/start.png"));
-		skin.add("stop", new Texture("data/minigame/stop.png"));
-		skin.add("back", new Texture("data/minigame/back.png"));
+		skin.addRegions(atlas);
+
 		
-		startBtn = new Image(skin, "start");
-		stopBtn = new Image(skin, "stop");
+		startBtn = new Image(skin, "startup");
+		stopBtn = new Image(skin, "stopup");
 		
 		startBtn.setPosition(0, 10);
 		stopBtn.setPosition(Gdx.graphics.getWidth()-stopBtn.getWidth(), 0);
 		
+		startBtn.addListener(new InputListener(){
+
+			@Override
+			public boolean handle(Event e) {
+				// TODO Auto-generated method stub
+				return super.handle(e);
+			}
+
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y,
+					int pointer, int button) {
+				startBtn.setDrawable(skin, "startdn");
+				return true;
+			}
+
+			@Override
+			public void touchUp(InputEvent event, float x, float y,
+					int pointer, int button) {
+				startBtn.setDrawable(skin, "startup");
+			}
+
+			@Override
+			public void touchDragged(InputEvent event, float x, float y,
+					int pointer) {
+				// TODO Auto-generated method stub
+				super.touchDragged(event, x, y, pointer);
+			}
+
+			@Override
+			public boolean mouseMoved(InputEvent event, float x, float y) {
+				// TODO Auto-generated method stub
+				return super.mouseMoved(event, x, y);
+			}
+
+			@Override
+			public void enter(InputEvent event, float x, float y, int pointer,
+					Actor fromActor) {
+				// TODO Auto-generated method stub
+				super.enter(event, x, y, pointer, fromActor);
+			}
+
+			@Override
+			public void exit(InputEvent event, float x, float y, int pointer,
+					Actor toActor) {
+				// TODO Auto-generated method stub
+				super.exit(event, x, y, pointer, toActor);
+			}
+
+			@Override
+			public boolean scrolled(InputEvent event, float x, float y,
+					int amount) {
+				// TODO Auto-generated method stub
+				return super.scrolled(event, x, y, amount);
+			}
+
+			@Override
+			public boolean keyDown(InputEvent event, int keycode) {
+				// TODO Auto-generated method stub
+				return super.keyDown(event, keycode);
+			}
+
+			@Override
+			public boolean keyUp(InputEvent event, int keycode) {
+				// TODO Auto-generated method stub
+				return super.keyUp(event, keycode);
+			}
+
+			@Override
+			public boolean keyTyped(InputEvent event, char character) {
+				// TODO Auto-generated method stub
+				return super.keyTyped(event, character);
+			}
+			
+		});
 		
-		track = new Sprite(new Texture(
-				Gdx.files.internal("data/minigame/track.jpg")));
+		
+		
+		
+		
+		
+		
+		track = new Sprite(atlas.findRegion("track"));
 		track.setSize(
 				Gdx.graphics.getWidth(),
 				1.0f * track.getHeight() / track.getWidth()
 						* Gdx.graphics.getWidth());
 		track.setPosition(0, Gdx.graphics.getHeight() - track.getHeight());
 
-		minitruck = new Sprite(new Texture(
-				Gdx.files.internal("data/minigame/minitruck.png")));
+		minitruck = new Sprite(atlas.findRegion("minitruck"));
 		minitruck.setSize(track.getHeight() / 3f * minitruck.getWidth()
 				/ minitruck.getHeight(), track.getHeight() / 3f);
 		minitruck.setPosition(
