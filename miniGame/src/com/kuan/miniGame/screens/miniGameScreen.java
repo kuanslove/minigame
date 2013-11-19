@@ -34,6 +34,7 @@ public class miniGameScreen implements Screen, InputProcessor {
 	private float speed = 8000;
 	public float react_time = 0;
 	public float dist = 0;
+	public boolean crashtriger = false;
 
 	private enum State {
 		SET, GO, STOP
@@ -81,8 +82,11 @@ public class miniGameScreen implements Screen, InputProcessor {
 				if (state == State.STOP) {
 					state = State.SET;
 					startBtn.setDrawable(skin, "startdn");
+					minitruck.setRegion(atlas.findRegion("minitruck"));
 					minitruck.setX(0);
 					react_time = 0;
+					dist = 0;
+					crashtriger = false;
 				}
 
 				Gdx.app.log("down", state.toString());
@@ -111,7 +115,7 @@ public class miniGameScreen implements Screen, InputProcessor {
 				} else {
 					if (state == State.GO) {
 						state = State.STOP;
-						Gdx.app.log("time", Float.toString(react_time) );
+						Gdx.app.log("time", Float.toString(react_time));
 					}
 				}
 				stopBtn.setDrawable(skin, "stopdn");
@@ -154,9 +158,15 @@ public class miniGameScreen implements Screen, InputProcessor {
 
 		if (state == State.GO) {
 			react_time += delta;
-			dist = speed * react_time;
-			if(dist>1500){
-				dist = 1500;
+
+			if (dist >= 1500) {
+				if (!crashtriger) {
+					dist = 1500;
+					minitruck.setRegion(atlas.findRegion("minitruck_bang"));
+					crashtriger = true;
+				}
+			} else {
+				dist = speed * react_time;
 			}
 			minitruck.setX(dist);
 		}
