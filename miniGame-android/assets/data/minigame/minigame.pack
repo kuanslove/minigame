@@ -45,9 +45,16 @@ minitruck
   orig: 256, 118
   offset: 0, 0
   index: -1
+minitruck_bang
+  rotate: false
+  xy: 643, 643
+  size: 256, 118
+  orig: 256, 118
+  offset: 0, 0
+  index: -1
 track
   rotate: false
-  xy: 643, 695
+  xy: 643, 575
   size: 188, 66
   orig: 188, 66
   offset: 0, 0
