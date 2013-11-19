@@ -9,8 +9,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -33,19 +31,21 @@ public class miniGameScreen implements Screen, InputProcessor {
 	private Sprite minitruck;
 
 	// 500 pixel/s
-	private int speed = 2500;
+	private float speed = 8000;
+	public float react_time = 0;
+	public float dist = 0;
 
-	private static enum State {
-		WAITING, SET, GO, STOP
+	private enum State {
+		SET, GO, STOP
 	};
 
-	State state;
+	private State state;
 
 	public miniGameScreen(miniGame game) {
 		this.game = game;
-		
-		state = State.WAITING;
-		
+
+		state = State.STOP;
+
 		setUI();
 		batch = new SpriteBatch();
 		cam = new OrthographicCamera();
@@ -57,6 +57,7 @@ public class miniGameScreen implements Screen, InputProcessor {
 	}
 
 	public void setUI() {
+
 		atlas = new TextureAtlas(
 				Gdx.files.internal("data/minigame/minigame.pack"),
 				Gdx.files.internal("data/minigame"));
@@ -69,21 +70,22 @@ public class miniGameScreen implements Screen, InputProcessor {
 		stopBtn = new Image(skin, "stopup");
 
 		startBtn.setPosition(0, 10);
-		stopBtn.setPosition(Gdx.graphics.getWidth() - stopBtn.getWidth(), 0);
+		stopBtn.setPosition(Gdx.graphics.getWidth() - stopBtn.getWidth(), 10);
 
 		startBtn.addListener(new InputListener() {
 
 			@Override
-			public boolean handle(Event e) {
-				// TODO Auto-generated method stub
-				return super.handle(e);
-			}
-
-			@Override
 			public boolean touchDown(InputEvent event, float x, float y,
 					int pointer, int button) {
-				startBtn.setDrawable(skin, "startdn");
-				state = State.SET;
+
+				if (state == State.STOP) {
+					state = State.SET;
+					startBtn.setDrawable(skin, "startdn");
+					minitruck.setX(0);
+					react_time = 0;
+				}
+
+				Gdx.app.log("down", state.toString());
 				return true;
 			}
 
@@ -92,146 +94,37 @@ public class miniGameScreen implements Screen, InputProcessor {
 					int pointer, int button) {
 				state = State.GO;
 				startBtn.setDrawable(skin, "startup");
-			}
-
-			@Override
-			public void touchDragged(InputEvent event, float x, float y,
-					int pointer) {
-				// TODO Auto-generated method stub
-				super.touchDragged(event, x, y, pointer);
-			}
-
-			@Override
-			public boolean mouseMoved(InputEvent event, float x, float y) {
-				// TODO Auto-generated method stub
-				return super.mouseMoved(event, x, y);
-			}
-
-			@Override
-			public void enter(InputEvent event, float x, float y, int pointer,
-					Actor fromActor) {
-				// TODO Auto-generated method stub
-				super.enter(event, x, y, pointer, fromActor);
-			}
-
-			@Override
-			public void exit(InputEvent event, float x, float y, int pointer,
-					Actor toActor) {
-				// TODO Auto-generated method stub
-				super.exit(event, x, y, pointer, toActor);
-			}
-
-			@Override
-			public boolean scrolled(InputEvent event, float x, float y,
-					int amount) {
-				// TODO Auto-generated method stub
-				return super.scrolled(event, x, y, amount);
-			}
-
-			@Override
-			public boolean keyDown(InputEvent event, int keycode) {
-				// TODO Auto-generated method stub
-				return super.keyDown(event, keycode);
-			}
-
-			@Override
-			public boolean keyUp(InputEvent event, int keycode) {
-				// TODO Auto-generated method stub
-				return super.keyUp(event, keycode);
-			}
-
-			@Override
-			public boolean keyTyped(InputEvent event, char character) {
-				// TODO Auto-generated method stub
-				return super.keyTyped(event, character);
+				Gdx.app.log("up", state.toString());
 			}
 
 		});
-		stopBtn.addListener(new InputListener() {
 
-			@Override
-			public boolean handle(Event e) {
-				// TODO Auto-generated method stub
-				return super.handle(e);
-			}
+		stopBtn.addListener(new InputListener() {
 
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y,
 					int pointer, int button) {
-				
-				
-				switch (state) {
-				
-				// Dear Robin, here I got a error to access this type varible
-				case miniGameScreen.State.GO:
-					
-					break;
 
-				default:
-					break;
+				if (state == State.SET) {
+					// show alert
+					Gdx.app.log("You press too early.", "Fault");
+				} else {
+					if (state == State.GO) {
+						state = State.STOP;
+						Gdx.app.log("time", Float.toString(react_time) );
+					}
 				}
-				
 				stopBtn.setDrawable(skin, "stopdn");
+				Gdx.app.log("down", state.toString());
 				return true;
 			}
 
 			@Override
 			public void touchUp(InputEvent event, float x, float y,
 					int pointer, int button) {
+				// state = State.GO;
+				Gdx.app.log("up", state.toString());
 				stopBtn.setDrawable(skin, "stopup");
-				super.touchUp(event, x, y, pointer, button);
-			}
-
-			@Override
-			public void touchDragged(InputEvent event, float x, float y,
-					int pointer) {
-				// TODO Auto-generated method stub
-				super.touchDragged(event, x, y, pointer);
-			}
-
-			@Override
-			public boolean mouseMoved(InputEvent event, float x, float y) {
-				// TODO Auto-generated method stub
-				return super.mouseMoved(event, x, y);
-			}
-
-			@Override
-			public void enter(InputEvent event, float x, float y, int pointer,
-					Actor fromActor) {
-				// TODO Auto-generated method stub
-				super.enter(event, x, y, pointer, fromActor);
-			}
-
-			@Override
-			public void exit(InputEvent event, float x, float y, int pointer,
-					Actor toActor) {
-				// TODO Auto-generated method stub
-				super.exit(event, x, y, pointer, toActor);
-			}
-
-			@Override
-			public boolean scrolled(InputEvent event, float x, float y,
-					int amount) {
-				// TODO Auto-generated method stub
-				return super.scrolled(event, x, y, amount);
-			}
-
-			@Override
-			public boolean keyDown(InputEvent event, int keycode) {
-				// TODO Auto-generated method stub
-				return super.keyDown(event, keycode);
-			}
-
-			@Override
-			public boolean keyUp(InputEvent event, int keycode) {
-				// TODO Auto-generated method stub
-				return super.keyUp(event, keycode);
-			}
-
-			@Override
-			public boolean keyTyped(InputEvent event, char character) {
-				// TODO Auto-generated method stub
-				return super.keyTyped(event, character);
 			}
 
 		});
@@ -258,6 +151,15 @@ public class miniGameScreen implements Screen, InputProcessor {
 		// TODO Auto-generated method stub
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+		if (state == State.GO) {
+			react_time += delta;
+			dist = speed * react_time;
+			if(dist>1500){
+				dist = 1500;
+			}
+			minitruck.setX(dist);
+		}
 
 		stage.act(delta);
 		stage.draw();
